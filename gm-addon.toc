@@ -1,7 +1,7 @@
 ## Interface: 11200
 ## Title: Turtle GM Addon
 ## Author: Xerron/Er
-## Version: 1.0.8
+## Version: 1.0.9
 ## Notes: Turtle GM Addon
 ## SavedVariables: TGM_DATA
 ## DefaultState: disabled

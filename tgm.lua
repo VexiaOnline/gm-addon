@@ -3,7 +3,7 @@ local _G, _ = _G or getfenv()
 local TGM = CreateFrame("Frame")
 
 TGM.prefix = 'GM_ADDON'
-
+TGM.version = "1.0.0"
 -- .shop log accountname
 
 TGM.tickets = {}
@@ -177,6 +177,7 @@ function TGM.init()
 
     _G['TGM']:SetScale(TGM_DATA.scale)
     _G['TGM']:SetAlpha(TGM_DATA.alpha)
+    TGMTicket:SetText("Turtle WoW GM Addon ("..TGM.version..")")
     TGM.disableButtonsAndText()
 end
 
@@ -243,9 +244,9 @@ function TGM.handleSystemMessage(text)
 
     -- refresh tickets on new ticket
     if string.find(text, "New ticket", 1, true) then
-		local soundfile = "igTextPopupPing02.wav"
-		if GetRealmName() == "Tel'Abim" then soundfile = "PlaceHolder.wav" end
-		PlaySoundFile("Sound\\Interface\\"..soundfile)
+		local soundfile = "nord-ticket.ogg"
+		if GetRealmName() == "Tel'Abim" then soundfile = "ta-ticket.ogg" end
+		PlaySoundFile("Interface\\AddOns\\gm-addon\\sounds\\"..soundfile)
         TGM_refreshTickets()
         return
     end
