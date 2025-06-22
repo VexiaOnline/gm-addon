@@ -1,6 +1,6 @@
 ## Interface: 11200
 ## Title: Turtle GM Addon
-## Author: Xerron/Er/Lexie/Lasciel
+## Author: Lasciel/Lexie/Xerron/Er
 ## Version: 1.0.9
 ## Notes: Turtle GM Addon
 ## SavedVariables: TGM_DATA
