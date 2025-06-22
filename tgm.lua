@@ -177,7 +177,7 @@ function TGM.init()
 
     _G['TGM']:SetScale(TGM_DATA.scale)
     _G['TGM']:SetAlpha(TGM_DATA.alpha)
-    TGMTicket:SetText("Turtle WoW GM Addon ("..TGM.version..")")
+    TGMTitle:SetText("Turtle WoW GM Addon ("..TGM.version..")")
     TGM.disableButtonsAndText()
 end
 
