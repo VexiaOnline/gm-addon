@@ -847,7 +847,7 @@ StaticPopupDialogs["TGM_EDIT_TEMPLATE_TEXT"] = {
 };
 
 
-function GMAConfig(parameter) 
+function TGMConfig(parameter) 
 	if parameter == '' then
         DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Current Configuration Options and Values:")
         DEFAULT_CHAT_FRAME:AddMessage("Option: tasound Value: "..TGM_CONFIG.tasound)
@@ -857,16 +857,53 @@ function GMAConfig(parameter)
         local claim = "Disabled"
         if TGM_CONFIG.claimsound then claim = TGM_CONFIG.claimsound end
 
-        DEFAULT_CHAT_FRAME:AddMessage("Option: claimsound Value: "..TGM_CONFIG.claimsound)
+        DEFAULT_CHAT_FRAME:AddMessage("Option: claimsound Value: "..claim)
 
-		DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Use /gma <option> <value> to set a specific configuration value.");
+		DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Use /tgm <option> <value> to set a specific configuration value.");
+    else
+
+    args = __explode(parameter, " ")
+
+    if __length(args) < 2 then
+        DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Usage: /tgm <option> <value>")
+        return
+    end
+
+    option = args[1]
+    value = args[2]
+
+    -- DEFAULT_CHAT_FRAME:AddMessage("Setting "..option.." to "..value)
+
+	if option == "tasound" then
+        TGM_CONFIG.tasound = value
+		DEFAULT_CHAT_FRAME:AddMessage("Updated tasound to "..value);
 	end
 
-	if parameter == "info" then
-		DEFAULT_CHAT_FRAME:AddMessage("--- --- --- --- --- ---");
+    if option == "nordsound" then
+        TGM_CONFIG.nordsound = value
+		DEFAULT_CHAT_FRAME:AddMessage("Updated nordsound to "..value);
 	end
+
+    if option == "abandonsound" then
+        TGM_CONFIG.abandonsound = value
+		DEFAULT_CHAT_FRAME:AddMessage("Updated abandonsound to "..value);
+	end
+
+    if option == "claimsound" then
+        if value == "clear" then
+            TGM_CONFIG.claimsound = nil
+            DEFAULT_CHAT_FRAME:AddMessage("Disabled claimsound");
+            return
+        else
+            TGM_CONFIG.claimsound = value
+            DEFAULT_CHAT_FRAME:AddMessage("Updated claimsound to "..value);
+        end
+	end
+
+
+    end
 
 end
 
-SLASH_GMA1 = '/gma'
-SlashCmdList["GMA"] = GMAConfig
+SLASH_TGM1 = '/tgm'
+SlashCmdList["TGM"] = TGMConfig
