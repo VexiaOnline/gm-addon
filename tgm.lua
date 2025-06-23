@@ -434,7 +434,7 @@ function TGM_CloseTicket(id)
     TGMLeftPanelResponseTicketScrollFrameTicketBox:ClearFocus()
     TGMLeftPanelResponseReplyScrollFrameReplyBox:SetText('')
     TGMLeftPanelResponseReplyScrollFrameReplyBox:ClearFocus()
-
+    TGMLeftPanelResponseTitle:SetText('')
     TGM.disableButtonsAndText()
     TGM_refreshTickets()
 
