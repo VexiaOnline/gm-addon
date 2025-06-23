@@ -101,7 +101,7 @@ You can also disable playing a sound when tickets are claimed by a GM by using `
 
 
 
-***Because you cannot have spaces in the filenames of custom sounds you may have added, the <soundfile> you enter MUST be a single string like the examples above, and include the .mp3 .wav or .ogg extension as well.***
+***Because you cannot have spaces in the filenames of custom sounds you may have added, the soundfile you enter MUST be a single string like the examples above, and include the .mp3 .wav or .ogg extension as well.***
 
 
 
