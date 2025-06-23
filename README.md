@@ -4,6 +4,12 @@ An addon for GMs to use to help manage Player Tickets for Turtle WoW servers.
 
 # Changelog
 
+## 1.0.11 - 6/23/2025
+
+### Added
+
+- Added a sound when a Ticket is abandoned.
+
 ## 1.0.10 - 6/22/2025
 
 ### Fixed
