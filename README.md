@@ -4,6 +4,17 @@ An addon for GMs to use to help manage Player Tickets for Turtle WoW servers.
 
 # Changelog
 
+## 1.0.12 - 6/23/2025
+
+### Added
+
+- Added a `/tgm` command to allow for some configuration of the addon.
+- - Usage: `/tgm <option> <value>`
+- - Available Options: `tasound` `nordsound` `abandonsound` `claimsound`
+- - Values should be a valid sound file (mp3, ogg, wav, etc.) in the `sounds` folder. 
+- - `nordsound` is the sound that plays when a ticket is created on Nord, etc. `abandonsound` is when a ticket is abandoned, and `claimsound` (Disabled by default) plays when a GM claims a ticket.
+- - You can disable claimsound by using `/tgm claimsound clear`
+
 ## 1.0.11 - 6/23/2025
 
 ### Added
