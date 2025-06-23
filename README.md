@@ -4,6 +4,12 @@ An addon for GMs to use to help manage Player Tickets for Turtle WoW servers.
 
 # Changelog
 
+## 1.0.10 - 6/22/2025
+
+### Fixed
+
+- Closing a ticket now clears the ticket created X ago text in the main window.
+
 ## 1.0.9 - 6/22/205
 
 ### Added
