@@ -845,3 +845,28 @@ StaticPopupDialogs["TGM_EDIT_TEMPLATE_TEXT"] = {
     whileDead = 0,
     hideOnEscape = 1,
 };
+
+
+function GMAConfig(parameter) 
+	if parameter == '' then
+        DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Current Configuration Options and Values:")
+        DEFAULT_CHAT_FRAME:AddMessage("Option: tasound Value: "..TGM_CONFIG.tasound)
+        DEFAULT_CHAT_FRAME:AddMessage("Option: nordsound Value: "..TGM_CONFIG.nordsound)
+        DEFAULT_CHAT_FRAME:AddMessage("Option: abandonsound Value: "..TGM_CONFIG.abandonsound)
+        
+        local claim = "Disabled"
+        if TGM_CONFIG.claimsound then claim = TGM_CONFIG.claimsound end
+
+        DEFAULT_CHAT_FRAME:AddMessage("Option: claimsound Value: "..TGM_CONFIG.claimsound)
+
+		DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Use /gma <option> <value> to set a specific configuration value.");
+	end
+
+	if parameter == "info" then
+		DEFAULT_CHAT_FRAME:AddMessage("--- --- --- --- --- ---");
+	end
+
+end
+
+SLASH_GMA1 = '/gma'
+SlashCmdList["GMA"] = GMAConfig
