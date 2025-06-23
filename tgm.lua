@@ -589,8 +589,8 @@ function TGM_TemplatePage(page)
     local start = 1
     local current = 1
     -- 2 = 16 , 3 = 31
-    if page > 1 and __length(TGM_DATA.templates) > 15 then
-        start = ((page-1) * 15)
+    if page > 1 and __length(TGM_DATA.templates) > 30 then
+        start = ((page-1) * 30)
     end
  
     for i, data in next, TGM_DATA.templates do repeat
