@@ -253,6 +253,14 @@ function TGM.handleSystemMessage(text)
 
     -- refresh tickets on ticket assign
     if string.find(text, "Ticket", 1, true) and
+            string.find(text, "abandoned", 1, true) then
+            local soundfile = "abandon.ogg"
+            PlaySoundFile("Interface\\AddOns\\gm-addon\\sounds\\"..soundfile)
+            TGM_refreshTickets()
+        return
+    end
+
+    if string.find(text, "Ticket", 1, true) and
             string.find(text, "Assigned to", 1, true) then
         TGM_refreshTickets()
         return
