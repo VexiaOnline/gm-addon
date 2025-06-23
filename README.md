@@ -4,6 +4,12 @@ An addon for GMs to use to help manage Player Tickets for Turtle WoW servers.
 
 # Changelog
 
+## 1.0.13 - 6/23/2025
+
+### Fixed
+
+- Fixed how pagination is calculated so that template list will display properly for every page
+
 ## 1.0.12 - 6/23/2025
 
 ### Added
