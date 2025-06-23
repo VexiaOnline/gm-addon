@@ -3,7 +3,7 @@ local _G, _ = _G or getfenv()
 local TGM = CreateFrame("Frame")
 
 TGM.prefix = 'GM_ADDON'
-TGM.version = "1.0.0"
+TGM.version = GetAddOnMetadata("gm-addon", "Version")
 -- .shop log accountname
 
 TGM.tickets = {}
