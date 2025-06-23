@@ -70,6 +70,15 @@ end)
 
 function TGM.init()
 
+    if not TGM_CONFIG then
+        TGM_CONFIG = {
+            tasound = "ta-ticket.ogg",
+            nordsound = "nord-ticket.ogg",
+            abandonsound = "abandon.ogg",
+            claimsound = nil,
+        }
+    end
+
     if not TGM_DATA then
         TGM_DATA = {
             scale = 1,
