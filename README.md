@@ -38,6 +38,8 @@ The TurtleWoW GM Addon by default will play a sound when a Ticket is created or 
 
 To use your own sounds, simply copy `.mp3`, `.wav`, or `.ogg` files into your `Interface/AddOns/gm-addon/sounds/` folder and then view the next section.
 
+***PLEASE NOTE THAT YOU CANNOT HAVE SPACES IN YOUR SOUND FILENAMES***
+
 ## Changing sounds
 
 To change sounds or list the ones currently being used you can use the `/tgm` command in game.
@@ -98,6 +100,8 @@ You should see confirmation when changing:
 You can also disable playing a sound when tickets are claimed by a GM by using `/tgm claimsound clear`
 
 
+
+***Because you cannot have spaces in the filenames of custom sounds you may have added, the <soundfile> you enter MUST be a single string like the examples above, and include the .mp3 .wav or .ogg extension as well.***
 
 
 
