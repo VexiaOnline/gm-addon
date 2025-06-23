@@ -3,6 +3,6 @@
 ## Author: Lasciel, |cffbe5effLexie|r, Xerron, Er
 ## Version: 1.0.11
 ## Notes: Turtle GM Addon
-## SavedVariables: TGM_DATA
+## SavedVariables: TGM_DATA, TGM_CONFIG
 ## DefaultState: disabled
 tgm.xml
