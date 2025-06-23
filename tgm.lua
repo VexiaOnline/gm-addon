@@ -253,8 +253,8 @@ function TGM.handleSystemMessage(text)
 
     -- refresh tickets on new ticket
     if string.find(text, "New ticket", 1, true) then
-		local soundfile = "nord-ticket.ogg"
-		if GetRealmName() == "Tel'Abim" then soundfile = "ta-ticket.ogg" end
+		local soundfile = TGM_CONFIG.nordsound
+		if GetRealmName() == "Tel'Abim" then soundfile = TGM_CONFIG.tasound end
 		PlaySoundFile("Interface\\AddOns\\gm-addon\\sounds\\"..soundfile)
         TGM_refreshTickets()
         return
@@ -263,14 +263,19 @@ function TGM.handleSystemMessage(text)
     -- refresh tickets on ticket assign
     if string.find(text, "Ticket", 1, true) and
             string.find(text, "abandoned", 1, true) then
-            local soundfile = "abandon.ogg"
+            local soundfile = TGM_CONFIG.abandonsound
             PlaySoundFile("Interface\\AddOns\\gm-addon\\sounds\\"..soundfile)
             TGM_refreshTickets()
         return
     end
 
     if string.find(text, "Ticket", 1, true) and
-            string.find(text, "Assigned to", 1, true) then
+                string.find(text, "Assigned to", 1, true) then
+        
+        if TGM_CONFIG.claimsound then
+            local soundfile = TGM_CONFIG.claimsound
+            PlaySoundFile("Interface\\AddOns\\gm-addon\\sounds\\"..soundfile)
+        end
         TGM_refreshTickets()
         return
     end
