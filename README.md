@@ -25,7 +25,7 @@ Click on the addons tab in your launcher, click the "Add new addon" button, then
 5. Copy or Move the `gm-addon` folder into the `Interface/AddOns/` folder inside your game client folder.
 
 
-### Post Install
+## Post Install
 
 The addon is disabled by default, so make sure to enable "Turtle GM Addon" in your addons, either with the addons button at character select, or an addon manager in game.
 
