@@ -636,8 +636,13 @@ function __length(arr)
 end
 
 
+function round(num, numDecimalPlaces)
+    local mult = 10^(numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
+  end
+
 function TGM_TemplatePageUp()
-    local max = math.floor(__length(TGM_DATA.templates)/15)
+    local max = round(round((__length(TGM_DATA.templates)/30)+.5,2))
     TGM.templatePage = TGM.templatePage + 1
     if TGM.templatePage > max then TGM.templatePage = max end
     TGM_CloseTemplates()
