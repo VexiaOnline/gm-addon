@@ -335,7 +335,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentTicketCount" inherits="GameFontNormal" text="Tickets (23)"
+                        <FontString name="$parentTicketCount" inherits="GameFontNormal" text="Tickets (0)"
                                     justifyH="LEFT">
                             <Size>
                                 <AbsDimension x="100" y="20"/>
