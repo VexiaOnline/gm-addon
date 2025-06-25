@@ -111,6 +111,14 @@ You can also disable playing a sound when tickets are claimed by a GM by using `
 
 # Changelog
 
+## 1.1.0 - 6/25/2025
+
+## Added
+
+- You can now search templates using the build in Search Button. It will search template titles and text and display any that match. The search is case sensitive.
+- Added `/tdm minimap` command which will move the sausage minimap icon to somewhere closer to the middle of your screen.
+- Added `/tdm susdelay <value>` command where you can set the delay on running the sus commands when logging in. Value should be a number in seconds to run the command after logging in or reloading.
+
 ## 1.0.14 - 6/25/2025
 
 ### Added
