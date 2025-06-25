@@ -56,6 +56,7 @@ TGM:SetScript("OnEvent", function()
     if event then
         if event == "ADDON_LOADED" and string.lower(arg1) == 'gm-addon' then
             TGM.init()
+            setTimer(3, TGM.loginCommands)
         end
         if event == 'CHAT_MSG_SYSTEM' then
             TGM.handleSystemMessage(arg1)
@@ -67,6 +68,20 @@ TGM:SetScript("OnEvent", function()
     end
 
 end)
+
+local timer = CreateFrame("FRAME");
+--'duration' is in seconds and 'func' is the function that will be executed in the end
+function setTimer(duration, func)
+	local endTime = GetTime() + duration;
+	
+	timer:SetScript("OnUpdate", function()
+		if(endTime < GetTime()) then
+			--time is up
+			func();
+			timer:SetScript("OnUpdate", nil);
+		end
+	end);
+end
 
 function TGM.init()
 
@@ -188,6 +203,17 @@ function TGM.init()
     _G['TGM']:SetAlpha(TGM_DATA.alpha)
     TGMTitle:SetText("Turtle WoW GM Addon ("..TGM.version..")")
     TGM.disableButtonsAndText()
+end
+
+function TGM.loginCommands()
+    -- Send commands on login
+        SendChatMessage(".gm ingame", "SAY")
+        SendChatMessage(".sus enable on", "SAY")
+        SendChatMessage(".sus notify on", "SAY")
+        SendChatMessage(".sus movementenable on", "SAY")
+        SendChatMessage(".sus fishingenable on", "SAY")
+        SendChatMessage(".sus killednpcenabled off", "SAY")
+
 end
 
 function TGM.clearScrollbarTexture(frame)
