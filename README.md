@@ -111,6 +111,18 @@ You can also disable playing a sound when tickets are claimed by a GM by using `
 
 # Changelog
 
+## 1.0.14 - 6/25/2025
+
+### Added
+
+- When logging in or reloading, the following commands will be run for the GM:
+    - `.gm ingame `
+    - `.sus enable on`
+    - `.sus notify on`
+    - `.sus movementenable on`
+    - `.sus fishingenable on`
+    - `.sus killnpcenabled off`
+
 ## 1.0.13 - 6/23/2025
 
 ### Fixed
