@@ -835,6 +835,7 @@ function TGMConfig(parameter)
         DEFAULT_CHAT_FRAME:AddMessage("Option: tasound Value: "..TGM_CONFIG.tasound)
         DEFAULT_CHAT_FRAME:AddMessage("Option: nordsound Value: "..TGM_CONFIG.nordsound)
         DEFAULT_CHAT_FRAME:AddMessage("Option: abandonsound Value: "..TGM_CONFIG.abandonsound)
+        DEFAULT_CHAT_FRAME:AddMessage("Option: susdelay Value: "..TGM_CONFIG.susdelay or 5)
         
         local claim = "Disabled"
         if TGM_CONFIG.claimsound then claim = TGM_CONFIG.claimsound end
