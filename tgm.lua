@@ -56,7 +56,7 @@ TGM:SetScript("OnEvent", function()
     if event then
         if event == "ADDON_LOADED" and string.lower(arg1) == 'gm-addon' then
             TGM.init()
-            setTimer(3, TGM.loginCommands)
+            setTimer(TGM_CONFIG.susdelay or 5, TGM.loginCommands)
         end
         if event == 'CHAT_MSG_SYSTEM' then
             TGM.handleSystemMessage(arg1)
@@ -517,14 +517,22 @@ end
 
 TGM.templatesFrames = {}
 TGM.templatePage = 1
+TGM.search = nil
 
 function TGM_TemplatePage(page)
     local col, row = 1, 1
     local start = 1
     local current = 1
-    -- 2 = 16 , 3 = 31
+
     if page > 1 and __length(TGM_DATA.templates) > 30 then
         start = ((page-1) * 30)
+    end
+
+    if TGM.search then
+        for i, data in next, TGM_DATA.templates do
+            local frame = "TGM_ResponseTemplate_" .. i
+            _G[frame]:Hide()
+        end
     end
  
     for i, data in next, TGM_DATA.templates do repeat
@@ -536,26 +544,28 @@ function TGM_TemplatePage(page)
             end
         end
         
-        local frame = "TGM_ResponseTemplate_" .. i
+        if not TGM.search or string.find(data.title, TGM.search, 1, true) or string.find(data.text, TGM.search, 1, true) then
 
-        _G[frame]:SetPoint("TOPLEFT", TGMTemplatesPanel, "TOPLEFT", 18 - 260 + 260 * col, -30 * row)
-        _G[frame .. 'Button']:SetText(data.title)
-        _G[frame .. 'Button']:SetID(i)
-        _G[frame .. 'EditButton']:SetID(i)
-        _G[frame .. 'DeleteButton']:SetID(i)
+            local frame = "TGM_ResponseTemplate_" .. i
 
-        _G[frame]:Show()
+            _G[frame]:SetPoint("TOPLEFT", TGMTemplatesPanel, "TOPLEFT", 18 - 260 + 260 * col, -30 * row)
+            _G[frame .. 'Button']:SetText(data.title)
+            _G[frame .. 'Button']:SetID(i)
+            _G[frame .. 'EditButton']:SetID(i)
+            _G[frame .. 'DeleteButton']:SetID(i)
 
-        col = col + 1
-         -- current = current + 1
-        if row == 15 and col > 2 then return end
-        if col > 2 then
-            col = 1
-            row = row + 1
+            _G[frame]:Show()
+
+            col = col + 1
+            if row == 15 and col > 2 then return end
+            if col > 2 then
+                col = 1
+                row = row + 1
+            end
         end
 
-
     until true end
+    TGM.search = nil
 end
 
 function __length(arr)
@@ -644,6 +654,10 @@ TGM.templateToEdit = 0
 function TGM_EditTemplate()
     TGM.templateToEdit = this:GetID()
     StaticPopup_Show('TGM_EDIT_TEMPLATE_TITLE')
+end
+
+function TGM_SearchTemplates()
+    StaticPopup_Show('TGM_SEARCH_TEMPLATES')
 end
 
 function TGM_CloseTemplates()
@@ -790,6 +804,30 @@ StaticPopupDialogs["TGM_EDIT_TEMPLATE_TEXT"] = {
     hideOnEscape = 1,
 };
 
+StaticPopupDialogs["TGM_SEARCH_TEMPLATES"] = {
+    text = "Search Templates for Text:",
+    button1 = "Search",
+    button2 = "Cancel",
+    hasEditBox = 1,
+    autoFocus = 1,
+    hideOnEscape = true,
+    OnShow = function()
+        getglobal(this:GetName() .. "EditBox"):SetText('')
+    end,
+    OnAccept = function()
+        local searchtext = getglobal(this:GetParent():GetName() .. "EditBox"):GetText()
+        if templateTitle == '' then
+            return
+        end
+
+        TGM.search = searchtext
+        TGM_TemplatePage(1)
+    end,
+    timeout = 0,
+    whileDead = 0,
+    hideOnEscape = 1,
+    enterClicksFirstButton = 1,
+};
 
 function TGMConfig(parameter) 
 	if parameter == '' then
@@ -805,6 +843,11 @@ function TGMConfig(parameter)
 
 		DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Use /tgm <option> <value> to set a specific configuration value.");
     else
+
+    if parameter == 'minimap' then
+        TGM_Minimap:SetPoint("TOPLEFT", UIParent, "TOPLEFT" ,960,-540)
+        return
+    end
 
     args = __explode(parameter, " ")
 
@@ -832,6 +875,16 @@ function TGMConfig(parameter)
         TGM_CONFIG.abandonsound = value
 		DEFAULT_CHAT_FRAME:AddMessage("Updated abandonsound to "..value);
 	end
+
+    if option == "susdelay" then
+        if type(tonumber(value)) == "number" then
+            -- If value is a number
+            TGM_CONFIG.susdelay = math.abs(value)
+            DEFAULT_CHAT_FRAME:AddMessage("Updated susdelay to "..value);
+        else
+            DEFAULT_CHAT_FRAME:AddMessage("Please use a valid number for susdelay.");
+        end
+    end
 
     if option == "claimsound" then
         if value == "clear" then
