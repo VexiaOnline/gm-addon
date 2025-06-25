@@ -443,6 +443,23 @@
                             </OnClick>
                         </Scripts>
                     </Button>
+                    <Button name="$parentSearchButton" inherits="UIPanelButtonTemplate2" text="Search">
+                        <Size>
+                            <AbsDimension x="190" y="18"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-210" y="20"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                TGM_SearchTemplates()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
                     <Button name="$parentTemplatePageDown" inherits="UIPanelButtonTemplate2" text="Prev">
                         <Size>
                             <AbsDimension x="50" y="18"/>
