@@ -56,7 +56,10 @@ TGM:SetScript("OnEvent", function()
     if event then
         if event == "ADDON_LOADED" and string.lower(arg1) == 'gm-addon' then
             TGM.init()
-            setTimer(TGM_CONFIG.susdelay or 5, TGM.loginCommands)
+            local delay = tonumber(TGM_CONFIG.susdelay) or 5
+            if delay > 0 then
+            setTimer(delay, TGM.loginCommands)
+            end
         end
         if event == 'CHAT_MSG_SYSTEM' then
             TGM.handleSystemMessage(arg1)
