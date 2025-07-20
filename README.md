@@ -111,6 +111,12 @@ You can also disable playing a sound when tickets are claimed by a GM by using `
 
 # Changelog
 
+## 1.1.1 - 7/19/2025
+
+### Fixed
+
+- Fixed a bug with the `/tgm` configuration command
+
 ## 1.1.0 - 6/25/2025
 
 ## Added
