@@ -111,6 +111,12 @@ You can also disable playing a sound when tickets are claimed by a GM by using `
 
 # Changelog
 
+## 1.1.3 - 7/20/2025
+
+## Added
+
+- If a player used the in game report feature for their ticket you can now Ctrl+Click on Player Info, Baninfo, and Go to Player buttons to perform those actions on the character that was reported.
+
 ## 1.1.2 - 7/19/2025
 
 ## Added
