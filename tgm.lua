@@ -217,6 +217,13 @@ function TGM.handleSystemMessage(text)
         return
     end
 
+    -- refresh ticket list if a ticket is closed by another GM
+    if string.find(text, "Ticket", 1, true) and
+        string.find(text, "Closed by", 1, true) then
+        TGM_refreshTickets()
+        return
+    end
+
     -- stop if no ticket is active
     if not TGM.ticket then
         return
