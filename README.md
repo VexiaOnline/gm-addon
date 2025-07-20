@@ -111,6 +111,12 @@ You can also disable playing a sound when tickets are claimed by a GM by using `
 
 # Changelog
 
+## 1.1.2 - 7/19/2025
+
+## Added
+
+- Ticket list will now automatically refresh when another GM closes a ticket so you don't have to manually refresh the list.
+
 ## 1.1.1 - 7/19/2025
 
 ### Fixed
