@@ -86,6 +86,16 @@ function setTimer(duration, func)
 	end);
 end
 
+function TGM_Debug()
+
+    if TGM.ticket then
+        local text = TGM.ticket.message
+        -- placeholder debug function
+    end
+
+end
+
+
 function TGM.init()
 
     if not TGM_CONFIG then
@@ -433,6 +443,12 @@ function TGM_WhisperPlayer()
 end
 
 function TGM_GoToPlayer()
+    if IsControlKeyDown() then
+        if ReportedPlayer() then
+            SendChatMessage('.goname ' .. ReportedPlayer())
+            return
+        end
+    end
     SendChatMessage('.goname ' .. TGM.ticket.name)
 end
 
@@ -441,6 +457,12 @@ function TGM_SummonPlayer()
 end
 
 function TGM_PlayerInfo()
+    if IsControlKeyDown() then
+        if ReportedPlayer() then
+            SendChatMessage('.pinfo ' .. ReportedPlayer())
+            return
+        end
+    end
     SendChatMessage('.pinfo ' .. TGM.ticket.name)
 end
 
@@ -449,6 +471,12 @@ function TGM_Target()
 end
 
 function TGM_BanInfo()
+    if IsControlKeyDown() then
+        if ReportedPlayer() then
+            SendChatMessage('.baninfo account ' .. ReportedPlayer())
+            return
+        end
+    end
     SendChatMessage('.baninfo account ' .. TGM.ticket.account)
 end
 
@@ -466,6 +494,23 @@ function TGM_Toggle()
     else
         _G['TGM']:Show()
     end
+end
+
+function ReportedPlayer()
+    if TGM.ticket then
+        local text = TGM.ticket.message
+        text = string.gsub(text,"\n"," ")
+        local args = {}
+        for v in string.gfind(text, "[^ ]+") do
+            tinsert(args, v)
+        end
+
+        if args[1] == "Player" and args[2] == "Name:" then
+            reported_player = args[3]
+            return reported_player
+        end
+    end
+    return false
 end
 
 function TGM_CopyButtonOnClick(field)
