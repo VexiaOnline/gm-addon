@@ -843,7 +843,8 @@ function TGMConfig(parameter)
         if TGM_CONFIG.claimsound then claim = TGM_CONFIG.claimsound end
 
         DEFAULT_CHAT_FRAME:AddMessage("Option: claimsound Value: "..claim)
-        DEFAULT_CHAT_FRAME:AddMessage("Option: susdelay Value: "..TGM_CONFIG.susdelay or 5)
+        local delay_display = TGM_CONFIG.susdelay or 5
+        DEFAULT_CHAT_FRAME:AddMessage("Option: susdelay Value: ".. delay_display)
 
 		DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Use /tgm <option> <value> to set a specific configuration value.");
     else
