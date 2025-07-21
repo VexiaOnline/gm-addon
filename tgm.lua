@@ -473,7 +473,7 @@ end
 function TGM_BanInfo()
     if IsControlKeyDown() then
         if ReportedPlayer() then
-            SendChatMessage('.baninfo account ' .. ReportedPlayer())
+            SendChatMessage('.baninfo character ' .. ReportedPlayer())
             return
         end
     end
