@@ -111,7 +111,7 @@ function TGM.init()
     TGM_CONFIG.tasound = TGM_CONFIG.tasound or "ta-ticket.ogg"
     TGM_CONFIG.nordsound = TGM_CONFIG.nordsound or "nord-ticket.ogg"
     TGM_CONFIG.ambersound = TGM_CONFIG.ambersound or "amber-ticket.ogg"
-    
+
     if not TGM_DATA then
         TGM_DATA = {
             scale = 1,
@@ -897,7 +897,7 @@ function TGMConfig(parameter)
         DEFAULT_CHAT_FRAME:AddMessage("Option: nordsound Value: "..TGM_CONFIG.nordsound)
         DEFAULT_CHAT_FRAME:AddMessage("Option: ambersound Value: "..TGM_CONFIG.ambersound)
         DEFAULT_CHAT_FRAME:AddMessage("Option: abandonsound Value: "..TGM_CONFIG.abandonsound)
-        DEFAULT_CHAT_FRAME:AddMessage("To reset Minimap Icon Use: /tgm minimap")
+        
         local claim = "Disabled"
         if TGM_CONFIG.claimsound then claim = TGM_CONFIG.claimsound end
 
@@ -905,7 +905,8 @@ function TGMConfig(parameter)
         local delay_display = TGM_CONFIG.susdelay or 5
         DEFAULT_CHAT_FRAME:AddMessage("Option: susdelay Value: ".. delay_display)
 
-		DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Use /tgm <option> <value> to set a specific configuration value.");
+		DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Use /tgm <option> <value> to set a specific configuration value.")
+        DEFAULT_CHAT_FRAME:AddMessage("To reset Minimap Icon Use: /tgm minimap")
     else
 
     if parameter == 'minimap' then
