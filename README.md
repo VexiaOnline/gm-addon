@@ -111,6 +111,13 @@ You can also disable playing a sound when tickets are claimed by a GM by using `
 
 # Changelog
 
+## 1.1.4 - 8/17/2025
+
+## Added
+
+- Added default ticket sound for tickets created on Ambershire.
+- Added a `/tgm ambersound` command to change ambershire ticket sound.
+
 ## 1.1.3 - 7/20/2025
 
 ## Added
