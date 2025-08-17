@@ -103,6 +103,7 @@ function TGM.init()
             tasound = "ta-ticket.ogg",
             nordsound = "nord-ticket.ogg",
             abandonsound = "abandon.ogg",
+            ambersound = "amber-ticket.ogg",
             claimsound = nil,
         }
     end
@@ -202,6 +203,7 @@ function TGM.handleSystemMessage(text)
     if string.find(text, "New ticket", 1, true) then
 		local soundfile = TGM_CONFIG.nordsound
 		if GetRealmName() == "Tel'Abim" then soundfile = TGM_CONFIG.tasound end
+        if GetRealmName() == "Ambershire" then soundfile = TGM_CONFIG.ambersound end
 		PlaySoundFile("Interface\\AddOns\\gm-addon\\sounds\\"..soundfile)
         TGM_refreshTickets()
         return
@@ -889,6 +891,7 @@ function TGMConfig(parameter)
         DEFAULT_CHAT_FRAME:AddMessage("[GM Addon] Current Configuration Options and Values:")
         DEFAULT_CHAT_FRAME:AddMessage("Option: tasound Value: "..TGM_CONFIG.tasound)
         DEFAULT_CHAT_FRAME:AddMessage("Option: nordsound Value: "..TGM_CONFIG.nordsound)
+        DEFAULT_CHAT_FRAME:AddMessage("Option: ambersound Value: "..TGM_CONFIG.ambersound)
         DEFAULT_CHAT_FRAME:AddMessage("Option: abandonsound Value: "..TGM_CONFIG.abandonsound)
       
         local claim = "Disabled"
@@ -926,6 +929,11 @@ function TGMConfig(parameter)
     if option == "nordsound" then
         TGM_CONFIG.nordsound = value
 		DEFAULT_CHAT_FRAME:AddMessage("Updated nordsound to "..value);
+	end
+
+    if option == "ambersound" then
+        TGM_CONFIG.ambersound = value
+		DEFAULT_CHAT_FRAME:AddMessage("Updated ambersound to "..value);
 	end
 
     if option == "abandonsound" then
