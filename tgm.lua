@@ -202,8 +202,8 @@ function TGM.handleSystemMessage(text)
     -- refresh tickets on new ticket
     if string.find(text, "New ticket", 1, true) then
 		local soundfile = TGM_CONFIG.nordsound
-		if GetRealmName() == "Tel'Abim" then soundfile = TGM_CONFIG.tasound end
-        if GetRealmName() == "Ambershire" then soundfile = TGM_CONFIG.ambersound end
+		if GetRealmName() == "Tel'Abim" then soundfile = TGM_CONFIG.tasound or 'ta-ticket.ogg' end
+        if GetRealmName() == "Ambershire" then soundfile = TGM_CONFIG.ambersound  or 'amber-ticket.ogg' end
 		PlaySoundFile("Interface\\AddOns\\gm-addon\\sounds\\"..soundfile)
         TGM_refreshTickets()
         return
