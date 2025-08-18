@@ -378,7 +378,9 @@ function TGM_AssignTicket(id)
             if data.assigned == '0' then
                 SendChatMessage('.ticket assign ' .. id .. ' ' .. UnitName('player'))
             else
-                SendChatMessage('.ticket unassign ' .. id)
+                if IsControlKeyDown() then
+                    SendChatMessage('.ticket unassign ' .. id)
+                end
             end
         end
     end
