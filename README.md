@@ -115,7 +115,7 @@ You can also disable playing a sound when tickets are claimed by a GM by using `
 
 ## Changed
 
-- Clicking the Assign button on a ticket if it has already been claimed (Clicking GM name) will no longer unassign the ticket unless you hold down Control. *This prevents quick GMs from both clicking in rapid succession and having one GM claim the ticket and the other instantly unassigning the ticket.*
+- Clicking the Assign button on a ticket if it has already been claimed (Clicking GM name) will no longer unassign the ticket unless you hold down Control. *This prevents quick GMs from clicking in rapid succession and having one GM claim the ticket and the other instantly unassigning the ticket.*
 
 ## 1.1.4 - 8/17/2025
 
