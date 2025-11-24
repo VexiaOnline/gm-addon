@@ -2,6 +2,9 @@ local _G, _ = _G or getfenv()
 
 local TGM = CreateFrame("Frame")
 
+-- Expose globally
+_G.TGMA = TGM
+
 TGM.prefix = 'GM_ADDON'
 TGM.version = GetAddOnMetadata("gm-addon", "Version")
 -- .shop log accountname
@@ -51,6 +54,24 @@ TGM.classColors = {
 TGM:RegisterEvent("ADDON_LOADED")
 TGM:RegisterEvent("CHAT_MSG_ADDON")
 TGM:RegisterEvent("CHAT_MSG_SYSTEM")
+
+function serialize(o)
+    if type(o) == "number" then
+        return tostring(o)
+    elseif type(o) == "string" then
+        return string.format("%q", o) -- %q formats string with quotes and escapes
+    elseif type(o) == "table" then
+        local s = "{\n"
+        for k, v in pairs(o) do
+            s = s .. "  " .. serialize(k) .. " = " .. serialize(v) .. ",\n"
+        end
+        s = s .. "}"
+        return s
+    else
+        error("Cannot serialize type: " .. type(o))
+    end
+end
+
 
 TGM:SetScript("OnEvent", function()
     if event then
@@ -570,12 +591,11 @@ function TGM_OnMouseWheel()
     end
 
     if IsShiftKeyDown() then
-        TGM_DATA.scale = 1
+        TGM_DATA.scale = TGM_DATA.scale + arg1 * 0.05
         _G['TGM']:SetScale(TGM_DATA.scale)
         return
     end
-    TGM_DATA.scale = TGM_DATA.scale + arg1 * 0.05
-    _G['TGM']:SetScale(TGM_DATA.scale)
+
 end
 
 TGM.templatesFrames = {}
