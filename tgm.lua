@@ -2,6 +2,9 @@ local _G, _ = _G or getfenv()
 
 local TGM = CreateFrame("Frame")
 
+-- Expose globally
+_G.TGMA = TGM
+
 TGM.prefix = 'GM_ADDON'
 TGM.version = GetAddOnMetadata("gm-addon", "Version")
 -- .shop log accountname
@@ -48,9 +51,64 @@ TGM.classColors = {
     ["WARRIOR"] = { r = 0.78, g = 0.61, b = 0.43, colorStr = "ffc79c6e" }
 };
 
+-- FIX: Global Toggle Function (assigned to _G to fix Minimap button error)
+_G.TGM_Toggle = function()
+    if _G['TGM']:IsVisible() then
+        _G['TGM']:Hide()
+    else
+        _G['TGM']:Show()
+    end
+end
+
+function __length(arr)
+    if not arr then
+        return 0
+    end
+    local rd = 0
+    for a in next, arr do
+        rd = rd + 1
+    end
+    return rd
+end
+
+function __explode(str, delimiter)
+    local result = {}
+    local from = 1
+    local delim_from, delim_to = string.find(str, delimiter, from, 1, true)
+    while delim_from do
+        tinsert(result, string.sub(str, from, delim_from - 1))
+        from = delim_to + 1
+        delim_from, delim_to = string.find(str, delimiter, from, true)
+    end
+    tinsert(result, string.sub(str, from))
+    return result
+end
+
+function __replace(s, c, cc)
+    return (string.gsub(s, c, cc))
+end
+
 TGM:RegisterEvent("ADDON_LOADED")
 TGM:RegisterEvent("CHAT_MSG_ADDON")
 TGM:RegisterEvent("CHAT_MSG_SYSTEM")
+
+function serialize(o)
+    if type(o) == "number" then
+        return tostring(o)
+    elseif type(o) == "string" then
+        return string.format("%q", o) -- %q formats string with quotes and escapes
+    elseif type(o) == "table" then
+        local s = "{\n"
+        for k, v in pairs(o) do
+            s = s .. "  " .. serialize(k) .. " = " .. serialize(v) .. ",\n"
+        end
+        s = s .. "}"
+        return s
+    else
+        error("Cannot serialize type: " .. type(o))
+    end
+end
+
 
 TGM:SetScript("OnEvent", function()
     if event then
@@ -492,17 +550,290 @@ function TGM_Recall()
     SendChatMessage('.recall ' .. TGM.ticket.name)
 end
 
+
+function TGM.send(m)
+    --DEFAULT_CHAT_FRAME:AddMessage("Send:" .. m)
+    SendAddonMessage(TGM.prefix, m, "GUILD")
+end
+
+-------------------------------------------------------------------------------
+-- SHOP LOG REWRITE (INTEGRATED: CLEAN REFUND PARSING & ACTION COLOR SWAP)
+-------------------------------------------------------------------------------
+
+local shopStopTimer = 0
+local TGM_ShopEntries = {} 
+local TGM_ShopRawData = {} 
+
+StaticPopupDialogs["TGM_CONFIRM_REFUND"] = {
+    text = "This item is outside the 48 hour refund window, are you sure you would like to refund it?",
+    button1 = "Yes",
+    button2 = "No",
+    OnAccept = function()
+        local d = this.data
+        if d then
+            SendChatMessage(".shop refund " .. d.id)
+            SendChatMessage(".balance " .. d.accName .. " " .. d.tokens)
+        end
+    end,
+    timeout = 0,
+    whileDead = 1,
+    hideOnEscape = 1,
+}
+
+local function TGM_IsOld(dateStr)
+    if not dateStr or dateStr == "0000-00-00" then return false end
+    local _, _, y, m, d = string.find(dateStr, "(%d%d%d%d)%-(%d%d)%-(%d%d)")
+    if y and m and d then
+        local entryTime = time({year=y, month=m, day=d, hour=0})
+        return (time() - entryTime) > 172800
+    end
+    return false
+end
+
+local function TGM_ParseShopLine(line)
+    -- 1. Date
+    local _, _, date = string.find(line, "(%d%d%d%d%-%d%d%-%d%d)")
+    date = date or "0000-00-00"
+    
+    -- 2. Character Name
+    local _, _, charName = string.find(line, "([%a%d]+)%s+%(GUID:")
+    charName = charName or "Unknown"
+
+    -- 3. IDs and Tokens
+    local _, _, transID = string.find(line, "ID (%d+)")
+    local _, _, tokens = string.find(line, "spent (%d+) tokens")
+    local _, _, itemID = string.find(line, "item (%d+)")
+    
+    -- 4. Item Name (FIXED: Cleanly removes the entire (REFUNDED) tag)
+    local itemName = "Unknown Item"
+    if itemID then
+        local _, itemIDEnd = string.find(line, "item " .. itemID)
+        if itemIDEnd then
+            itemName = string.sub(line, itemIDEnd + 2)
+            -- Target the entire block including parentheses
+            itemName = string.gsub(itemName, "%s?%(%[REFUNDED%]%)", "")
+            -- Fallback for non-bracketed variants just in case
+            itemName = string.gsub(itemName, "%s?%[REFUNDED%]", "")
+            itemName = string.gsub(itemName, "^%s*(.-)%s*$", "%1")
+        end
+    end
+    
+    -- 5. Refunded Check
+    local isRefunded = false
+    if string.find(line, "REFUNDED") then
+        isRefunded = true
+    end
+
+    return date, transID or "---", tokens or "0", itemID or "---", itemName, isRefunded, TGM_IsOld(date), charName
+end
+
+local function TGM_ShopMenu_Initialize()
+    local info = {}
+    local data = TGM_ShopRawData[UIDROPDOWNMENU_MENU_VALUE]
+    if not data then return end
+
+    local accName = (TGM.ticket and TGM.ticket.account) or "Unknown"
+
+    info.text = "Buyer: " .. data.charName
+    info.isTitle = 1
+    info.notCheckable = 1
+    UIDropDownMenu_AddButton(info)
+
+    info = {}
+    info.text = "Check for Item ("..data.itemId..")"
+    info.func = function() 
+        SendChatMessage(".char hasitem " .. data.itemId .. " " .. data.charName) 
+    end
+    info.notCheckable = 1
+    UIDropDownMenu_AddButton(info)
+
+    info = {}
+    info.text = "Delete Item ("..data.itemId..")"
+    info.func = function() 
+        SendChatMessage(".deleteitem " .. data.itemId .. " 1 " .. data.charName) 
+    end
+    info.notCheckable = 1
+    UIDropDownMenu_AddButton(info)
+
+    if not data.isRefunded then
+        info = {}
+        info.text = "Refund Item ("..data.tokens.." Tokens)"
+        info.func = function() 
+            if data.isOld then
+                local popupData = {id = data.id, tokens = data.tokens, accName = accName}
+                local dialog = StaticPopup_Show("TGM_CONFIRM_REFUND")
+                if dialog then dialog.data = popupData end
+            else
+                SendChatMessage(".shop refund " .. data.id)
+                SendChatMessage(".balance " .. accName .. " " .. data.tokens)
+            end
+        end
+        info.notCheckable = 1
+        UIDropDownMenu_AddButton(info)
+    end
+
+    info = {}
+    info.text = "Copy Trans ID"
+    info.func = function() 
+        local editBox = ChatFrameEditBox
+        editBox:Show()
+        editBox:SetText(data.id)
+        editBox:HighlightText()
+    end
+    info.notCheckable = 1
+    UIDropDownMenu_AddButton(info)
+end
+
+local function TGM_UpdateShopDisplay()
+    for i = 1, 15 do
+        local lineFrame = _G["TGM_ShopLine"..i]
+        local btn = _G["TGM_ShopBtn"..i]
+        if lineFrame then
+            if TGM_ShopEntries[i] then
+                lineFrame:SetText(TGM_ShopEntries[i])
+                btn:Show()
+            else
+                lineFrame:SetText("")
+                btn:Hide()
+            end
+        end
+    end
+end
+
+local function TGM_CreateShopUI()
+    if TGM_ShopLogPopup then return end
+
+    TGM_ShopLogPopup = CreateFrame("Frame", "TGM_ShopLogPopup", UIParent)
+    TGM_ShopLogPopup:SetWidth(650)
+    TGM_ShopLogPopup:SetHeight(400)
+    TGM_ShopLogPopup:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    TGM_ShopLogPopup:SetFrameStrata("DIALOG")
+    TGM_ShopLogPopup:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+        tile = true, tileSize = 32, edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+    TGM_ShopLogPopup:SetBackdropColor(0, 0, 0, 0.95)
+    TGM_ShopLogPopup:EnableMouse(true)
+    TGM_ShopLogPopup:SetMovable(true)
+    TGM_ShopLogPopup:RegisterForDrag("LeftButton")
+    TGM_ShopLogPopup:SetScript("OnDragStart", function() this:StartMoving() end)
+    TGM_ShopLogPopup:SetScript("OnDragStop", function() this:StopMovingOrSizing() end)
+
+    TGM_ShopMenu = CreateFrame("Frame", "TGM_ShopMenu", TGM_ShopLogPopup, "UIDropDownMenuTemplate")
+
+    local closeX = CreateFrame("Button", nil, TGM_ShopLogPopup, "UIPanelCloseButton")
+    closeX:SetPoint("TOPRIGHT", TGM_ShopLogPopup, "TOPRIGHT", -5, -5)
+
+    local closeBtn = CreateFrame("Button", nil, TGM_ShopLogPopup, "UIPanelButtonTemplate")
+    closeBtn:SetWidth(100)
+    closeBtn:SetHeight(25)
+    closeBtn:SetPoint("BOTTOM", TGM_ShopLogPopup, "BOTTOM", 0, 15)
+    closeBtn:SetText("Close")
+    closeBtn:SetScript("OnClick", function() TGM_ShopLogPopup:Hide() end)
+
+    local header = TGM_ShopLogPopup:CreateFontString(nil, "OVERLAY", "ChatFontNormal")
+    header:SetFont("Fonts\\ARIALN.TTF", 12)
+    header:SetPoint("TOPLEFT", TGM_ShopLogPopup, "TOPLEFT", 25, -25)
+    -- Adjusted header spacing for better alignment
+    header:SetText("Date            Trans ID        Tokens  Item ID  Item Name")
+    header:SetTextColor(1, 0.82, 0)
+
+    for i = 1, 15 do
+        local t = TGM_ShopLogPopup:CreateFontString("TGM_ShopLine"..i, "OVERLAY", "ChatFontNormal")
+        t:SetFont("Fonts\\ARIALN.TTF", 12)
+        t:SetPoint("TOPLEFT", TGM_ShopLogPopup, "TOPLEFT", 25, (-35 - (i * 18)))
+        t:SetJustifyH("LEFT")
+        t:SetWidth(600)
+
+        local b = CreateFrame("Button", "TGM_ShopBtn"..i, TGM_ShopLogPopup)
+        b:SetWidth(600)
+        b:SetHeight(16)
+        b:SetPoint("TOPLEFT", t, "TOPLEFT", 0, 0)
+        b:SetID(i)
+        
+        local tex = b:CreateTexture(nil, "HIGHLIGHT")
+        tex:SetAllPoints()
+        tex:SetTexture(1, 1, 1, 0.1)
+
+        b:SetScript("OnClick", function()
+            local id = this:GetID()
+            if TGM_ShopRawData[id] then
+                UIDropDownMenu_Initialize(TGM_ShopMenu, TGM_ShopMenu_Initialize, "MENU")
+                TGM_ShopMenu.displayMode = "MENU"
+                TGM_ShopMenu.relativePoint = "BOTTOMLEFT"
+                ToggleDropDownMenu(1, id, TGM_ShopMenu, "cursor", 0, 0)
+            end
+        end)
+    end
+
+    TGM_ShopStatus = TGM_ShopLogPopup:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    TGM_ShopStatus:SetPoint("BOTTOMLEFT", TGM_ShopLogPopup, "BOTTOMLEFT", 25, 50)
+
+    TGM_ShopListener = CreateFrame("Frame")
+    TGM_ShopListener:SetScript("OnEvent", function()
+        if event == "CHAT_MSG_SYSTEM" and shopStopTimer > 0 then
+            
+            if string.find(arg1, "spent %d+ tokens") then
+                local date, id, tokens, itemID, name, refunded, old, charName = TGM_ParseShopLine(arg1)
+                
+                local row = string.format("%-16s%-16s%-8s%-9s%s", date, id, tokens, itemID, name)
+                local color = "|cff00ff00"
+                if refunded then color = "|cff0070dd" elseif old then color = "|cffff0000" end
+                
+                table.insert(TGM_ShopEntries, 1, color .. row .. "|r")
+                table.insert(TGM_ShopRawData, 1, {
+                    id = id, itemId = itemID, tokens = tokens, 
+                    name = name, isOld = old, isRefunded = refunded, charName = charName,
+                    rawDate = date 
+                })
+                
+                if table.getn(TGM_ShopEntries) > 15 then 
+                    table.remove(TGM_ShopEntries, 16) 
+                    table.remove(TGM_ShopRawData, 16)
+                end
+                TGM_UpdateShopDisplay()
+
+            elseif string.find(arg1, "Shop ID (%d+) for player %d+ marked as refunded") then
+                local _, _, refundID = string.find(arg1, "Shop ID (%d+)")
+                
+                for k, v in pairs(TGM_ShopRawData) do
+                    if v.id == refundID then
+                        v.isRefunded = true
+                        local row = string.format("%-16s%-16s%-8s%-9s%s", v.rawDate, v.id, v.tokens, v.itemId, v.name)
+                        TGM_ShopEntries[k] = "|cff0070dd" .. row .. "|r"
+                        TGM_UpdateShopDisplay()
+                        break
+                    end
+                end
+
+            elseif string.find(arg1, "Account balance") then
+                TGM_ShopStatus:SetText("|cffffff00" .. arg1 .. "|r")
+            end
+        end
+    end)
+end
+
 function TGM_ShopLog()
+    if not TGM_ShopLogPopup then TGM_CreateShopUI() end
+    if not TGM.ticket or not TGM.ticket.account then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffff0000TGM Error:|r No account selected.")
+        return
+    end
+
+    TGM_ShopEntries = {}
+    TGM_ShopRawData = {}
+    TGM_UpdateShopDisplay()
+    TGM_ShopStatus:SetText("Scanning " .. TGM.ticket.account .. "...")
+    TGM_ShopLogPopup:Show()
+    
+    shopStopTimer = 4.0
+    TGM_ShopListener:RegisterEvent("CHAT_MSG_SYSTEM")
     SendChatMessage('.shop log ' .. TGM.ticket.account)
 end
 
-function TGM_Toggle()
-    if _G['TGM']:IsVisible() then
-        _G['TGM']:Hide()
-    else
-        _G['TGM']:Show()
-    end
-end
+--- end update shop
 
 function ReportedPlayer()
     if TGM.ticket then
@@ -570,12 +901,11 @@ function TGM_OnMouseWheel()
     end
 
     if IsShiftKeyDown() then
-        TGM_DATA.scale = 1
+        TGM_DATA.scale = TGM_DATA.scale + arg1 * 0.05
         _G['TGM']:SetScale(TGM_DATA.scale)
         return
     end
-    TGM_DATA.scale = TGM_DATA.scale + arg1 * 0.05
-    _G['TGM']:SetScale(TGM_DATA.scale)
+
 end
 
 TGM.templatesFrames = {}
@@ -708,11 +1038,6 @@ function TGM_DeleteTemplate()
     StaticPopup_Show('CONFIRM_DELETE_TEMPLATE')
 end
 
-function TGM.send(m)
-    --DEFAULT_CHAT_FRAME:AddMessage("Send:" .. m)
-    SendAddonMessage(TGM.prefix, m, "GUILD")
-end
-
 TGM.templateToEdit = 0
 function TGM_EditTemplate()
     TGM.templateToEdit = this:GetID()
@@ -726,34 +1051,6 @@ end
 function TGM_CloseTemplates()
     TGMTemplatesPanel:Hide()
     TGMRightPanel:Show()
-end
-
-function __length(arr)
-    if not arr then
-        return 0
-    end
-    local rd = 0
-    for a in next, arr do
-        rd = rd + 1
-    end
-    return rd
-end
-
-function __explode(str, delimiter)
-    local result = {}
-    local from = 1
-    local delim_from, delim_to = string.find(str, delimiter, from, 1, true)
-    while delim_from do
-        tinsert(result, string.sub(str, from, delim_from - 1))
-        from = delim_to + 1
-        delim_from, delim_to = string.find(str, delimiter, from, true)
-    end
-    tinsert(result, string.sub(str, from))
-    return result
-end
-
-function __replace(s, c, cc)
-    return (string.gsub(s, c, cc))
 end
 
 StaticPopupDialogs["TGM_NEW_TEMPLATE"] = {

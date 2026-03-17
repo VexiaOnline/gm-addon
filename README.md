@@ -111,6 +111,21 @@ You can also disable playing a sound when tickets are claimed by a GM by using `
 
 # Changelog
 
+## 1.1.6 - 3/17/2026
+
+## Changed
+
+- Changed the way Ticket Display rows function so that tickets from characters with long names are more readable
+
+## Added
+
+- New Shop Log and refund workflow. Now when you click on the shop log for an account with a ticket, it will show a list of the accounts recent purchases. The latest 15 by default. 
+- Each of these entries in the table is color coded, Green if the item is within the refund window, Red if it is outside the refund window, and blue if the item has already been refunded.
+- Clicking on a row will open a menu that will let you check the character who bought the item for that item, delete the item, as well as refund.
+- Clicking refund will automatically refund the transaction id as well as credit the account the proper amount of tokens.
+
+*Please keep an eye on the chat log to be safe. If the TICKET information has failed to populate an account, then these functions will obviously not work.*
+
 ## 1.1.5 - 8/17/2025
 
 ## Changed

@@ -48,7 +48,7 @@
                     </Anchors>
                 </FontString>
                 <FontString name="$parentTicketTextShort" inherits="GameFontHighlight"
-                            text="Gm please help me, youre my only hope" justifyH="LEFT">
+                            text="Gm please help me, youre my only hope" justifyH="CENTER">
                     <Size>
                         <AbsDimension x="300" y="20"/>
                     </Size>
